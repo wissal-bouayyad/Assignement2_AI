@@ -2,6 +2,7 @@ from dataclasses import dataclass, field
 
 @dataclass(slots=True)
 class State:
+    # donne l'état du jeu
     """
     Represents the complete state of an Oxono game at a given point in time.
 
@@ -151,6 +152,7 @@ class Game:
 
     @staticmethod
     def actions(state: State) -> list[tuple[str, tuple[int, int], tuple[int, int]]]:
+        # list de tt les coups possible 
         """
         Return all legal actions available to the current player.
 
@@ -218,6 +220,7 @@ class Game:
 
     @staticmethod
     def apply(state: State, action: tuple[str, tuple[int, int], tuple[int, int]]):
+        # applique un coup 
         """
         Apply an action to the state, mutating it in place.
 
@@ -384,3 +387,5 @@ class Game:
             else:
                 return -1
         return 0
+
+        

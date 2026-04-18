@@ -413,3 +413,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     VisualManager(agent_files=[args.p0, args.p1], time_limit=args.t, path_to_file=args.l)
+
+
+    
