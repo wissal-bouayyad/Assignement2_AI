@@ -12,6 +12,7 @@ def max_value(game: Game, state: State, alpha: float, beta: float):
         return game.utility(state, game.to_move(state))
     
     v = -float('inf')
+    move = None
     for a in game.actions(state):
         v2,a2 = min_value(game,game.result(state,a),alpha,beta)
         if v2 > v:
@@ -25,6 +26,7 @@ def min_value(game: Game, state: State, alpha: float, beta: float):
     if game.is_terminal(state):
         return game.utility(state, game.to_move(state))
     v = float('inf')
+    move = None
     for a in game.actions(state):
         v2,a2 = max_value(game,game.result(state,a),alpha,beta)
         if v2 < v:

@@ -1,5 +1,3 @@
-from agent_helper import alpha_beta_search 
-
 class Agent:
     """
     Abstract base class that every agent must extend.
@@ -51,9 +49,7 @@ class Agent:
             A legal action. Must be present in Game.actions(state).
         
         """
-        timeout=remaining_time
-        try:
-            if timeout >0:
-                return alpha_beta_search(self, state)    
-        except:
-            print("timeout")
+        raise NotImplementedError("You must implement the act() method in your agent.")
+    
+
+

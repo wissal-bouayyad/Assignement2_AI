@@ -260,5 +260,3 @@ if __name__ == "__main__":
     print(f"  {args.p0:<20} wins: {wins_p0:>4}  ({100 * wins_p0 / args.n:.1f}%)")
     print(f"  {args.p1:<20} wins: {wins_p1:>4}  ({100 * wins_p1 / args.n:.1f}%)")
     print(f"  Draws:                     {draws:>4}  ({100 * draws / args.n:.1f}%)")
-
-    
