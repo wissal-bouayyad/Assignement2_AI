@@ -1,12 +1,12 @@
 from agent import Agent
-from agent_helper_move_ordering import alpha_beta_search,Iterative_deepening_alpha_beta_search
+from agent_helper_move_ordering import alpha_beta_search
 from oxono import Game
 
 class MyAgent(Agent):
     def act(self, state, remaining_time):
 
         try: 
-            return Iterative_deepening_alpha_beta_search(Game, state,remaining_time)    
+            return alpha_beta_search(Game, state,remaining_time)    
         except TimeoutError:
             print("timeout")
             return None
