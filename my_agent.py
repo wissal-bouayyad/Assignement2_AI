@@ -1,9 +1,7 @@
-
+from agent import Agent
 import copy
 import time
 from oxono import State, Game
-
-from agent import Agent
 
 class MyAgent(Agent):
     def act(self, state, remaining_time):
@@ -14,24 +12,21 @@ class MyAgent(Agent):
             print("timeout")
             return None
             
-        
-## function definitions 
+
 
 def Iterative_deepening_alpha_beta_search(game: Game, state: State,remaining_time:float):
-
-    for depth in range(0,100):
+    for depth in range(0,10):
         move = None
         try:
+            print("depth : ", depth)
             result = alpha_beta_search(game,state,remaining_time, depth)
             if result != (None,None):
                 move =  result
         except TimeoutError:
             print("timeout")
-            return move
-        return move
+            break
+    return move
             
-        
-
 
 def alpha_beta_search(game: Game, state: State, remaining_time:float, depth:float):
     """help chose the best action"""
@@ -55,6 +50,7 @@ def max_value(game: Game, state: State, alpha: float, beta: float, player: str, 
     
     v = -float('inf')
     move = None
+    
     for a in game.actions(state):
         v2,a2 = min_value(game,result(game,state,a),alpha,beta,player, remaining_time,time_start, depth-1)
         if v2 > v:
