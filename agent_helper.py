@@ -9,26 +9,26 @@ def alpha_beta_search(game: Game, state: State):
 
 def max_value(game: Game, state: State, alpha: float, beta: float):
     if game.is_terminal(state):
-        return game.utility(state, game.to_move(state))
+        return game.utility(state, game.to_move(state)),None
     
     v = -float('inf')
     move = None
     for a in game.actions(state):
-        v2,a2 = min_value(game,game.result(state,a),alpha,beta)
+        v2,a2 = min_value(game,result(game,state,a),alpha,beta)
         if v2 > v:
             move,v = a,v2
             alpha = max(alpha,v)
-        if v >=beta: 
+        if v >=beta:   
             return v , move 
     return v, move
 
 def min_value(game: Game, state: State, alpha: float, beta: float):
     if game.is_terminal(state):
-        return game.utility(state, game.to_move(state))
+        return game.utility(state, game.to_move(state)),None
     v = float('inf')
     move = None
     for a in game.actions(state):
-        v2,a2 = max_value(game,game.result(state,a),alpha,beta)
+        v2,a2 = max_value(game,result(game,state,a),alpha,beta)
         if v2 < v:
             move,v = a,v2
             beta = min(beta,v)
@@ -37,3 +37,8 @@ def min_value(game: Game, state: State, alpha: float, beta: float):
     return v, move
 
    
+def result(game: Game, state: State, action):
+    """ return the result of a action"""
+    copy_state = state.copy()
+    game.apply(copy_state, action)
+    return copy_state
