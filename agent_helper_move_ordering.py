@@ -3,6 +3,7 @@ import time
 from oxono import State, Game
 
 def Iterative_deepening_alpha_beta_search(game: Game, state: State,remaining_time:float):
+
     for depth in range(0,100):
         move = None
         try:
@@ -11,7 +12,7 @@ def Iterative_deepening_alpha_beta_search(game: Game, state: State,remaining_tim
                 move =  result
         except TimeoutError:
             print("timeout")
-            return None
+            return move
         return move
             
         
@@ -19,6 +20,7 @@ def Iterative_deepening_alpha_beta_search(game: Game, state: State,remaining_tim
 
 def alpha_beta_search(game: Game, state: State, remaining_time:float, depth:float):
     """help chose the best action"""
+    # remaining time gestion
     time_start = time.time()
     if time_left(remaining_time, time_start) <= 0:
         raise TimeoutError("timeout")
@@ -43,6 +45,7 @@ def max_value(game: Game, state: State, alpha: float, beta: float, player: str, 
         if v2 > v:
             move,v = a,v2
             alpha = max(alpha,v)
+        # pruning
         if v >=beta: 
             return v , move 
     return v, move
@@ -61,6 +64,7 @@ def min_value(game: Game, state: State, alpha: float, beta: float, player: str, 
         if v2 < v:
             move,v = a,v2
             beta = min(beta,v)
+        # pruning
         if v <= alpha:
             return v, move
     return v, move
