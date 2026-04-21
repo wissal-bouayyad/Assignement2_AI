@@ -8,28 +8,25 @@ class MyAgent(Agent):
     def act(self, state, remaining_time):
 
         try:
-            think_time = min(0.2, remaining_time * 0.1)
-            return Iterative_deepening_alpha_beta_search(Game, state, think_time)
+            t_time = (min(0.2, remaining_time * 0.1))
+            return Iterative_deepening_alpha_beta_search(Game, state, t_time)
         except TimeoutError:
-            print("timeout")
             return None
 
 
 def Iterative_deepening_alpha_beta_search(game: Game, state: State, remaining_time: float):
         depth = 1
         move = None
-        start_time = time.time()
+        s_time = time.time()
         while True:
-            if time.time() - start_time >= remaining_time:
+            if time.time() - s_time >= remaining_time:
                 break
             try:
-                # print("depth : ", depth)
-                result = alpha_beta_search(game, state, remaining_time - (time.time() - start_time), depth)
-                if result is not None:
+                result = alpha_beta_search(game, state, remaining_time - (time.time() - s_time), depth)
+                if result != (None, None):
                     move = result
                 depth += 1
             except TimeoutError:
-                # print("timeout")
                 break
         return move
 
@@ -91,7 +88,7 @@ def min_value(game: Game, state: State, alpha: float, beta: float, player: str, 
 
 def result(game: Game, state: State, action):
     """ return the result of a action"""
-    copy_state = state.copy()
+    copy_state = copy.deepcopy(state)
     game.apply(copy_state, action)
     return copy_state
 
