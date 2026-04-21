@@ -1,7 +1,18 @@
 import copy
+from oxono import State, Game
+from agent import Agent
 import time
 from oxono import State, Game
 
+
+class MyAgent(Agent):
+    def act(self, state, remaining_time):
+        try:
+            t_time = (min(0.2, remaining_time * 0.1))
+            return alpha_beta_search(Game, state, t_time)
+        except TimeoutError:
+            return None
+        
 def alpha_beta_search(game: Game, state: State, remaining_time:float):
     """help chose the best action"""
     # remaining time gestion
