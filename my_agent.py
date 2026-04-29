@@ -42,6 +42,8 @@ def alpha_beta_search(game: Game, state: State, remaining_time: float, depth: fl
 
 def max_value(game: Game, state: State, alpha: float, beta: float, player: str, remaining_time: float,
               time_start: float, depth: float, f_move=None):
+    ## remplacer terminal par if game.IS-CUTOFF(state, depth) then return game.EVAL(state, player), null
+    ## eval = 
     if game.is_terminal(state) or depth == 0:
         return game.utility(state, player), None
 
@@ -67,10 +69,9 @@ def max_value(game: Game, state: State, alpha: float, beta: float, player: str, 
     return v, move
 
 
-def min_value(game: Game, state: State, alpha: float, beta: float, player: str, remaining_time: float,
-              time_start: float, depth: float):
-    if game.is_terminal(state) or depth == 0:
-        return game.utility(state, player), None
+def min_value(game: Game, state: State, alpha: float, beta: float, player: str, remaining_time: float, time_start: float, depth: float):
+    # if game.is_terminal(state) or depth == 0:
+    #     return game.utility(state, player), None
 
     if time_left(remaining_time, time_start) <= 0:
         raise TimeoutError("timeout")
@@ -97,3 +98,51 @@ def result(game: Game, state: State, action):
 
 def time_left(remaining_time: float, time_start: float):
     return remaining_time - (time.time() - time_start)
+
+## somme des value*poids des coups possibles
+## on a des features et donc des facteurs qui impacte le jeux
+## on a des poids pour  l'importance de chaque facteur
+def eval(state: State, player: str):
+    ## EVAL(s) =w1f1(s)+w2f2(s)+···+wnfn(s) = n ∑ i=1 wi fi(s),
+
+    ## feature 1
+    my_x_pieces_left = state.pieces_x[player]
+    my_o_pieces_left = state.pieces_o[player]
+    opps = None
+
+    opps_x_pieces_left = state.pieces_x[opps]
+    opps_o_pieces_left= state.pieces_o[opps]
+
+    if player == 0:
+        opps = 1
+    else:
+        opps = 0    
+
+    weight_left_pieces = 1
+
+    w1_f1 = ((my_x_pieces_left + my_o_pieces_left)- (opps_x_pieces_left+opps_o_pieces_left))*weight_left_pieces
+
+
+    ## feature 2 : combien de ma couleur sont sur ma line ou column
+    last_move = state.last_move
+    weight_last_move = 1
+
+    if last_move is not None:
+        line = last_move[0]
+        column = last_move[1]
+        count_l =0
+        count_c=0
+        for i in range(8):
+            if state.board[line][i][0] == player:
+                count_l +=1
+            if state.board[column][i][0] == player:
+                count_c +=1
+
+
+    w2_f2 = weight_last_move * (count_l+count_c) 
+
+    return w1_f1 + w2_f2
+
+## arreter if on depasse le depth choisit
+def is_cutOff(state: State, depth: float):
+    return 0
