@@ -44,8 +44,11 @@ def max_value(game: Game, state: State, alpha: float, beta: float, player: str, 
               time_start: float, depth: float, f_move=None):
     ## remplacer terminal par if game.IS-CUTOFF(state, depth) then return game.EVAL(state, player), null
     ## eval = 
-    if game.is_terminal(state) or depth == 0:
-        return game.utility(state, player), None
+    #if game.is_terminal(state) or depth == 0:
+     #   return game.utility(state, player), None
+
+    if is_cutOff(state,depth):
+        return eval(state,player), None
 
     if time_left(remaining_time, time_start) <= 0:
         raise TimeoutError("timeout")
@@ -70,8 +73,9 @@ def max_value(game: Game, state: State, alpha: float, beta: float, player: str, 
 
 
 def min_value(game: Game, state: State, alpha: float, beta: float, player: str, remaining_time: float, time_start: float, depth: float):
-    # if game.is_terminal(state) or depth == 0:
-    #     return game.utility(state, player), None
+    
+    if game.is_terminal(state) or depth == 0:
+        return game.utility(state, player), None
 
     if time_left(remaining_time, time_start) <= 0:
         raise TimeoutError("timeout")
@@ -145,4 +149,7 @@ def eval(state: State, player: str):
 
 ## arreter if on depasse le depth choisit
 def is_cutOff(state: State, depth: float):
-    return 0
+    depth_max = 100
+    if depth >= depth_max:
+        return True
+    return False
