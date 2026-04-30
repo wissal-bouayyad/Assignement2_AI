@@ -47,7 +47,7 @@ def max_value(game: Game, state: State, alpha: float, beta: float, player: str, 
     #if game.is_terminal(state) or depth == 0:
      #   return game.utility(state, player), None
 
-    if is_cutOff(state,depth):
+    if is_cutOff(game,state,depth):
         return eval(state,player), None
 
     if time_left(remaining_time, time_start) <= 0:
@@ -148,8 +148,8 @@ def eval(state: State, player: str):
     return w1_f1 + w2_f2
 
 ## arreter if on depasse le depth choisit
-def is_cutOff(state: State, depth: float):
-    depth_max = 100
-    if depth >= depth_max:
+## add a condition
+def is_cutOff(game: Game,state: State, depth: float):
+    if game.is_terminal(state) or depth == 0:
         return True
     return False
