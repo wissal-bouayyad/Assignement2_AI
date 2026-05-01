@@ -47,7 +47,7 @@ def max_value(game: Game, state: State, alpha: float, beta: float, player: str, 
     #if game.is_terminal(state) or depth == 0:
      #   return game.utility(state, player), None
 
-    if is_cutOff(game,state,depth,remaining_time,time_start):
+    if is_cutOff(game,state,depth):
         return eval(state,player,game), None
 
     if time_left(remaining_time, time_start) <= 0:
@@ -74,7 +74,7 @@ def max_value(game: Game, state: State, alpha: float, beta: float, player: str, 
 
 def min_value(game: Game, state: State, alpha: float, beta: float, player: str, remaining_time: float, time_start: float, depth: float):
     
-    if is_cutOff(game,state,depth,remaining_time,time_start):
+    if is_cutOff(game,state,depth):
         return eval(state,player,game), None
 
     if time_left(remaining_time, time_start) <= 0:
@@ -154,7 +154,7 @@ def eval(state: State, player: str, game:Game):
     return result
 
 
-def is_cutOff(game: Game,state: State, depth: float, remaining_time: float, time_start: float ):
+def is_cutOff(game: Game,state: State, depth: float):
     if game.is_terminal(state) or depth == 0:
         return True
     
