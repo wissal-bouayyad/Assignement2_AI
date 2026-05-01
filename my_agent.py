@@ -48,7 +48,7 @@ def max_value(game: Game, state: State, alpha: float, beta: float, player: str, 
      #   return game.utility(state, player), None
 
     if is_cutOff(game,state,depth,remaining_time,time_start):
-        return eval(state,player), None
+        return eval(state,player,game), None
 
     if time_left(remaining_time, time_start) <= 0:
         raise TimeoutError("timeout")
@@ -75,7 +75,7 @@ def max_value(game: Game, state: State, alpha: float, beta: float, player: str, 
 def min_value(game: Game, state: State, alpha: float, beta: float, player: str, remaining_time: float, time_start: float, depth: float):
     
     if is_cutOff(game,state,depth,remaining_time,time_start):
-        return eval(state,player), None
+        return eval(state,player,game), None
 
     if time_left(remaining_time, time_start) <= 0:
         raise TimeoutError("timeout")
@@ -106,34 +106,33 @@ def time_left(remaining_time: float, time_start: float):
 ## somme des value*poids des coups possibles
 ## on a des features et donc des facteurs qui impacte le jeux
 ## on a des poids pour  l'importance de chaque facteur
-def eval(state: State, player: str):
-    ## EVAL(s) =w1f1(s)+w2f2(s)+···+wnfn(s) = n ∑ i=1 wi fi(s),
-
+## EVAL(s) =w1f1(s)+w2f2(s)+···+wnfn(s) = n ∑ i=1 wi fi(s),
+def eval(state: State, player: str, game:Game):
+    ## For terminal states, it must be that EVAL(s,p)=UTILITY(s,p)
+    if game.is_terminal(state): 
+        return game.utility(state, player)
+    
     ## feature 1
     my_x_pieces_left = state.pieces_x[player]
     my_o_pieces_left = state.pieces_o[player]
-    opps = None
-    if player == 0:
-        opps = 1
-    else:
-        opps = 0    
-
+    opps = 1 - player
     
     opps_x_pieces_left = state.pieces_x[opps]
     opps_o_pieces_left= state.pieces_o[opps]
 
-    weight_left_pieces = 1
+    w1 = 2
 
-    w1_f1 = ((my_x_pieces_left + my_o_pieces_left)- (opps_x_pieces_left+opps_o_pieces_left))*weight_left_pieces
+    w1_f1 = ((my_x_pieces_left + my_o_pieces_left)- (opps_x_pieces_left+opps_o_pieces_left))*w1
 
 
-    ## feature 2 : combien de ma couleur sont sur ma line ou column
+    ## feature 2 : combien de ma couleur sont sur ma line ou column 
+    ## feature 2 : combien de même signe o ou x sont sur ma line ou column 
+
     last_move = state.last_move
-    weight_last_move = 1
+    w2 = 1
     count_l = 0
     count_c = 0
-
-        
+    
     if last_move is not None:
         line = last_move[0]
         column = last_move[1]
@@ -142,19 +141,21 @@ def eval(state: State, player: str):
                 count_l +=1
             if state.board[i][column] is not None and state.board[i][column][1] == player:
                 count_c +=1
+            
+    w2_f2 = w2 * (count_l + count_c ) 
+
+    ## feature 3 : 
+    w3_f3 = 0.2 * len(game.actions(state))
+
+    
+    #result 
+    result =  w1_f1 + w2_f2 + w3_f3 
+    
+    return result
 
 
-    ## feature 3 combien de same sign sont sur ma ligne ou couleur
-    ## 3 o ? 3 x ? 
-
-
-    w2_f2 = weight_last_move * (count_l+count_c) 
-
-    return w1_f1 + w2_f2
-
-
-def is_cutOff(game: Game,state: State, depth: float,remaining_time: float, time_start: float ):
+def is_cutOff(game: Game,state: State, depth: float, remaining_time: float, time_start: float ):
     if game.is_terminal(state) or depth == 0:
         return True
-
+    
     return False
