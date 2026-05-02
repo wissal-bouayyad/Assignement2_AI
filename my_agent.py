@@ -42,11 +42,7 @@ def alpha_beta_search(game: Game, state: State, remaining_time: float, depth: fl
 
 def max_value(game: Game, state: State, alpha: float, beta: float, player: str, remaining_time: float,
               time_start: float, depth: float, f_move=None):
-    ## remplacer terminal par if game.IS-CUTOFF(state, depth) then return game.EVAL(state, player), null
-    ## eval = 
-    #if game.is_terminal(state) or depth == 0:
-     #   return game.utility(state, player), None
-
+    
     if is_cutOff(game,state,depth):
         return eval(state,player,game), None
 
@@ -66,7 +62,7 @@ def max_value(game: Game, state: State, alpha: float, beta: float, player: str, 
         if v2 > v:
             move, v = a, v2
             alpha = max(alpha, v)
-        # pruning
+
         if v >= beta:
             return v, move
     return v, move
@@ -87,7 +83,7 @@ def min_value(game: Game, state: State, alpha: float, beta: float, player: str, 
         if v2 < v:
             move, v = a, v2
             beta = min(beta, v)
-        # pruning
+
         if v <= alpha:
             return v, move
     return v, move
@@ -118,12 +114,7 @@ def moves_v (game: Game, state: State, player):
     return count
 
 
-## somme des value*poids des coups possibles
-## on a des features et donc des facteurs qui impacte le jeux
-## on a des poids pour  l'importance de chaque facteur
-## EVAL(s) =w1f1(s)+w2f2(s)+···+wnfn(s) = n ∑ i=1 wi fi(s),
 def eval(state: State, player: str, game:Game):
-    ## For terminal states, it must be that EVAL(s,p)=UTILITY(s,p)
     if game.is_terminal(state): 
         return game.utility(state, player)
 
@@ -149,8 +140,7 @@ def eval(state: State, player: str, game:Game):
     w1_f1 = ((my_x_pieces_left + my_o_pieces_left)- (opps_x_pieces_left+opps_o_pieces_left))*w1
 
 
-    ## feature 2 : combien de ma couleur sont sur ma line ou column 
-    ## feature 2 : combien de même signe o ou x sont sur ma line ou column 
+    ## feature 2 
 
     last_move = state.last_move
     w2 = 1
@@ -177,7 +167,6 @@ def eval(state: State, player: str, game:Game):
     else:
         w3_f3 = 0.05 * len(game.actions(state))
     
-    #result 
     result =  w1_f1 + w2_f2 + w3_f3
     
     return result
