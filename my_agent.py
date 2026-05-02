@@ -6,7 +6,7 @@ from oxono import State, Game
 class MyAgent(Agent):
     def act(self, state, remaining_time):
         try:
-            t_time = (min(0.2, remaining_time * 0.1))
+            t_time = (min(0.35, remaining_time * 0.15))
             return Iterative_deepening_alpha_beta_search(Game, state, t_time)
         except TimeoutError:
             return None
@@ -103,6 +103,21 @@ def result(game: Game, state: State, action):
 def time_left(remaining_time: float, time_start: float):
     return remaining_time - (time.time() - time_start)
 
+#Nombre de coups gagnants immédiats
+def moves_v (game: Game, state: State, player):
+    count = 0
+    player_ac = state.current_player
+    state.current_player = player
+
+    for m in game.actions(state):
+        simulation = result(game, state, m)
+        if game.is_terminal(simulation) and game.utility(simulation, player) == 1:
+            count += 1
+
+    state.current_player = player_ac
+    return count
+
+
 ## somme des value*poids des coups possibles
 ## on a des features et donc des facteurs qui impacte le jeux
 ## on a des poids pour  l'importance de chaque facteur
@@ -111,11 +126,20 @@ def eval(state: State, player: str, game:Game):
     ## For terminal states, it must be that EVAL(s,p)=UTILITY(s,p)
     if game.is_terminal(state): 
         return game.utility(state, player)
-    
+
+    opps = 1 - player
+
+    my_move = moves_v(game, state, player)
+    opp_mov  = moves_v(game, state, opps)
+
+    if my_move > 0:
+        return  500 + my_move
+    if opp_mov > 0:
+        return -500 - opp_mov
+
     ## feature 1
     my_x_pieces_left = state.pieces_x[player]
     my_o_pieces_left = state.pieces_o[player]
-    opps = 1 - player
     
     opps_x_pieces_left = state.pieces_x[opps]
     opps_o_pieces_left= state.pieces_o[opps]
@@ -144,12 +168,17 @@ def eval(state: State, player: str, game:Game):
             
     w2_f2 = w2 * (count_l + count_c ) 
 
-    ## feature 3 : 
-    w3_f3 = 0.2 * len(game.actions(state))
+    ## feature 3 :
 
+    pieces = sum(state.pieces_x) + sum(state.pieces_o)
+
+    if pieces <= 8:
+        w3_f3 = 0.01 * len(game.actions(state))
+    else:
+        w3_f3 = 0.05 * len(game.actions(state))
     
     #result 
-    result =  w1_f1 + w2_f2 + w3_f3 
+    result =  w1_f1 + w2_f2 + w3_f3
     
     return result
 
