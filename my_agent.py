@@ -99,34 +99,12 @@ def result(game: Game, state: State, action):
 def time_left(remaining_time: float, time_start: float):
     return remaining_time - (time.time() - time_start)
 
-#Nombre de coups gagnants immédiats
-def moves_v (game: Game, state: State, player):
-    count = 0
-    player_ac = state.current_player
-    state.current_player = player
-
-    for m in game.actions(state):
-        simulation = result(game, state, m)
-        if game.is_terminal(simulation) and game.utility(simulation, player) == 1:
-            count += 1
-
-    state.current_player = player_ac
-    return count
-
 
 def eval(state: State, player: int, game:Game):
     if game.is_terminal(state): 
         return game.utility(state, player)
 
     opps = 1 - player
-
-    my_move = moves_v(game, state, player)
-    opp_mov  = moves_v(game, state, opps)
-
-    if my_move > 0:
-        return  500 + my_move
-    if opp_mov > 0:
-        return -500 - opp_mov
 
     ## feature 1
     my_x_pieces_left = state.pieces_x[player]
@@ -135,7 +113,7 @@ def eval(state: State, player: int, game:Game):
     opps_x_pieces_left = state.pieces_x[opps]
     opps_o_pieces_left= state.pieces_o[opps]
 
-    w1 = 2
+    w1 = 3
 
     w1_f1 = ((my_x_pieces_left + my_o_pieces_left)- (opps_x_pieces_left+opps_o_pieces_left))*w1
 
@@ -143,7 +121,7 @@ def eval(state: State, player: int, game:Game):
     ## feature 2 
 
     last_move = state.last_move
-    w2 = 1
+    w2 = 0.4
     count_l = 0
     count_c = 0
     
@@ -151,10 +129,17 @@ def eval(state: State, player: int, game:Game):
         line = last_move[0]
         column = last_move[1]
         for i in range(6):
-            if state.board[line][i] is not None and state.board[line][i][1] == player:
-                count_l +=1
-            if state.board[i][column] is not None and state.board[i][column][1] == player:
-                count_c +=1
+            if state.board[line][i] is not None:
+                if state.board[line][i][1] == player:
+                    count_l +=1
+                else:
+                    count_l -=1
+
+            if state.board[i][column] is not None:
+                if state.board[i][column][1] == player:
+                    count_c +=1
+                else:
+                    count_c -=1
             
     w2_f2 = w2 * (count_l + count_c ) 
 
@@ -163,9 +148,9 @@ def eval(state: State, player: int, game:Game):
     pieces = sum(state.pieces_x) + sum(state.pieces_o)
 
     if pieces <= 8:
-        w3_f3 = 0.01 * len(game.actions(state))
+        w3_f3 = 0.15 * len(game.actions(state))
     else:
-        w3_f3 = 0.05 * len(game.actions(state))
+        w3_f3 = 0.10 * len(game.actions(state))
     
     result =  w1_f1 + w2_f2 + w3_f3
     
