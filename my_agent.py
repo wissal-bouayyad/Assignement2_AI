@@ -40,7 +40,7 @@ def alpha_beta_search(game: Game, state: State, remaining_time: float, depth: fl
     return move
 
 
-def max_value(game: Game, state: State, alpha: float, beta: float, player: str, remaining_time: float,
+def max_value(game: Game, state: State, alpha: float, beta: float, player: int, remaining_time: float,
               time_start: float, depth: float, f_move=None):
     
     if is_cutOff(game,state,depth):
@@ -68,7 +68,7 @@ def max_value(game: Game, state: State, alpha: float, beta: float, player: str, 
     return v, move
 
 
-def min_value(game: Game, state: State, alpha: float, beta: float, player: str, remaining_time: float, time_start: float, depth: float):
+def min_value(game: Game, state: State, alpha: float, beta: float, player: int, remaining_time: float, time_start: float, depth: float):
     
     if is_cutOff(game,state,depth):
         return eval(state,player,game), None
@@ -114,7 +114,7 @@ def moves_v (game: Game, state: State, player):
     return count
 
 
-def eval(state: State, player: str, game:Game):
+def eval(state: State, player: int, game:Game):
     if game.is_terminal(state): 
         return game.utility(state, player)
 
